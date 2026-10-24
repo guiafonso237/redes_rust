@@ -1,8 +1,21 @@
 use std::net::{TcpStream, SocketAddr, IpAddr};
 use std::time::Duration;
 use std::io::{self, Write};
+use clap::Parser;
+
 fn main() {
-    descobrir_portas();
+    let args = Opcoes::parse();
+
+    exec(args);
+
+    //descobrir_portas();
+}
+
+fn exec(args : Opcoes){
+    if args.mostrar_todos{
+        descobrir_portas();
+    }
+
 }
 
 fn descobrir_ip() -> String {
@@ -79,4 +92,13 @@ fn descobrir_portas(){
             break;
         }
     }
+}
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct Opcoes{
+    #[arg(short= 'a', long)]
+    mostrar_todos : bool,
+
+
 }
