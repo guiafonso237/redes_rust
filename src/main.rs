@@ -8,14 +8,21 @@ fn main() {
 
     exec(args);
 
-    //descobrir_portas();
 }
 
 fn exec(args : Opcoes){
-    if args.mostrar_todos{
-        descobrir_portas();
+    if args.mostrar_faixa_ip{
+        println!("{}", descobrir_ip_geral());
     }
-
+    if args.mostrar_todos{
+        descobrir_portas(1, 10_000);
+    }
+    if args.porta.is_some(){
+        let intervalo = args.porta.unwrap();
+        let (min, max) = obter_portas_especificas(intervalo);
+        
+        descobrir_portas(min, max);
+    }
 }
 
 fn descobrir_ip() -> String {
@@ -35,7 +42,6 @@ fn descobrir_ip_geral() -> String{
         Some(pos) => ip_inicial[..pos].to_string(),
         None => ip_inicial,
     }
-    
 }
 
 fn transformar_string_to_ip(ip_string : &str) -> IpAddr {
@@ -50,7 +56,7 @@ fn transformar_string_to_ip(ip_string : &str) -> IpAddr {
     ip
 }
 
-fn descobrir_portas(){
+fn descobrir_portas(porta_min : u16, porta_max : u16){
     let mut iterador : u16 = 1;
     let mut porta = String::new();
     let tempo = Duration::from_millis(100);
@@ -66,7 +72,7 @@ fn descobrir_portas(){
         io::stdout().flush().unwrap();
 
 
-        for i in 1..100 {
+        for i in porta_min..porta_max {
             ip = SocketAddr::new(transformar_string_to_ip(&faixa_ip), i);
 
             porta.clear();
@@ -94,11 +100,26 @@ fn descobrir_portas(){
     }
 }
 
+fn obter_portas_especificas(intervalo : String) -> (u16, u16){
+
+    if let Some((parte_1, parte_2)) = intervalo.split_once("-") {
+        let valor_min : u16 = parte_1.parse().expect("Erro ao transformar o primeiro valor em int");
+        let valor_max : u16 = parte_2.parse().expect("Erro ao transformar o segundo valor em int"); 
+
+        return (valor_min, valor_max);
+    }else{
+        return (0, 0);
+    }
+}
+
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Opcoes{
     #[arg(short= 'a', long)]
     mostrar_todos : bool,
 
-
+    #[arg(short= 'g', long)]
+    mostrar_faixa_ip : bool,
+    #[arg(short= 'p', long)]
+    porta : Option<String>,
 }
