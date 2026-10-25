@@ -39,6 +39,6 @@ Em vez de depender de frameworks pesados, a aplicação foi desenhada para inter
 
 ### Instalação
 ```bash
-git clone [https://github.com/guiafonso237/redes_rust.git]
+git clone [https://github.com/guiafonso237/Network_Subnet_Scanner.git]
 cd NOME_DO_REPOSITORIO
 cargo build --release
